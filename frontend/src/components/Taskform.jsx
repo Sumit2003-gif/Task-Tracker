@@ -15,15 +15,27 @@ const TaskForm = () => {
         dueDate: ''
     });
 
+    // --- Validation Logic ---
+    // Title aur Due Date mandatory hain requirements ke hisaab se
+    const isFormInvalid = !formData.title.trim() || !formData.dueDate;
+
     const handleSubmit = async (e) => {
         e.preventDefault();
+        
+        // Double check validation
+        if (isFormInvalid) {
+            toast.error("Please fill all required fields");
+            return;
+        }
+
         setLoading(true);
         try {
             await dispatch(addNewTask(formData)).unwrap();
-            toast.success('Action successful!');
+            toast.success('Task created successfully!', {
+                style: { borderRadius: '15px', background: '#333', color: '#fff' }
+            });
             setFormData({ title: '', description: '', priority: 'Medium', dueDate: '' });
         } catch (error) {
-            // alert(error?.message || "Failed to add task");
             toast.error(error?.message || "Failed to add task");
         } finally {
             setLoading(false);
@@ -48,7 +60,7 @@ const TaskForm = () => {
                     {/* Title Input */}
                     <div className="space-y-2">
                         <label className="flex items-center gap-2 text-sm font-bold text-slate-500 ml-1">
-                            <HiOutlineDocumentText className="text-blue-500" /> Task Title
+                            <HiOutlineDocumentText className="text-blue-500" /> Task Title *
                         </label>
                         <input 
                             type="text" 
@@ -56,28 +68,26 @@ const TaskForm = () => {
                             className="w-full p-4 bg-slate-50/50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:bg-white focus:border-blue-500 outline-none transition-all placeholder:text-slate-300 font-medium"
                             value={formData.title}
                             onChange={(e) => setFormData({...formData, title: e.target.value})}
-                            required
                         />
                     </div>
 
                     {/* Date Input */}
                     <div className="space-y-2">
                         <label className="flex items-center gap-2 text-sm font-bold text-slate-500 ml-1">
-                            <HiOutlineCalendar className="text-blue-500" /> Due Date
+                            <HiOutlineCalendar className="text-blue-500" /> Due Date *
                         </label>
                         <input 
                             type="date" 
                             className="w-full p-4 bg-slate-50/50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:bg-white focus:border-blue-500 outline-none transition-all cursor-pointer font-medium"
                             value={formData.dueDate}
                             onChange={(e) => setFormData({...formData, dueDate: e.target.value})}
-                            required
                         />
                     </div>
 
                     {/* Description Input */}
                     <div className="space-y-2 md:col-span-2">
                         <label className="flex items-center gap-2 text-sm font-bold text-slate-500 ml-1">
-                            <HiOutlineDocumentText className="text-blue-500" /> Description
+                            <HiOutlineDocumentText className="text-blue-500" /> Description (Optional)
                         </label>
                         <textarea 
                             placeholder="What are the specific steps or requirements?"
@@ -95,7 +105,7 @@ const TaskForm = () => {
                         </label>
                         <div className="relative">
                             <select 
-                                className="w-full p-4 bg-slate-50/50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:bg-white focus:border-blue-500 outline-none transition-all appearance-none cursor-pointer font-bold text-slate-700"
+                                className="w-full p-4 bg-slate-50/50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:bg-white focus:border-blue-500 outline-none appearance-none cursor-pointer font-bold text-slate-700"
                                 value={formData.priority}
                                 onChange={(e) => setFormData({...formData, priority: e.target.value})}
                             >
@@ -112,13 +122,13 @@ const TaskForm = () => {
                     {/* Submit Button */}
                     <div className="flex items-end">
                         <motion.button 
-                            whileHover={{ scale: 1.02 }}
-                            whileTap={{ scale: 0.98 }}
-                            disabled={loading}
+                            whileHover={!isFormInvalid ? { scale: 1.02 } : {}}
+                            whileTap={!isFormInvalid ? { scale: 0.98 } : {}}
+                            disabled={isFormInvalid || loading}
                             type="submit" 
                             className={`w-full h-[60px] flex items-center justify-center gap-2 font-black rounded-2xl transition-all shadow-xl active:shadow-inner ${
-                                loading 
-                                ? 'bg-slate-200 text-slate-400 cursor-not-allowed' 
+                                (isFormInvalid || loading) 
+                                ? 'bg-slate-100 text-slate-300 cursor-not-allowed shadow-none border border-slate-50' 
                                 : 'bg-slate-900 text-white hover:bg-blue-600 shadow-blue-200/20'
                             }`}
                         >
@@ -127,7 +137,7 @@ const TaskForm = () => {
                             ) : (
                                 <>
                                     <HiPlus size={20} />
-                                    <span>Create Task</span>
+                                    <span>{isFormInvalid ? 'Fill All Details' : 'Create Task'}</span>
                                 </>
                             )}
                         </motion.button>

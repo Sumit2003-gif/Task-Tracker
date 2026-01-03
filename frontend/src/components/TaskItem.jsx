@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { HiOutlineTrash, HiOutlineCheckCircle, HiOutlineClock, HiOutlineExclamationCircle, HiOutlinePencilAlt } from 'react-icons/hi';
 import { IoMdDoneAll } from 'react-icons/io';
 import EditTaskModal from './EditTaskModel';
+import toast from 'react-hot-toast';
 
 const TaskItem = ({ task }) => {
     const dispatch = useDispatch();
@@ -15,7 +16,16 @@ const TaskItem = ({ task }) => {
         Medium: "from-amber-400 to-yellow-500 text-amber-600 border-amber-100",
         Low: "from-emerald-400 to-teal-500 text-emerald-600 border-emerald-100"
     };
-
+    const handleDelete = async () => {
+        try {
+            await dispatch(deleteTaskThunk(task._id)).unwrap();
+            toast.success('Task deleted successfully!', {
+                style: { borderRadius: '15px', background: '#333', color: '#fff' }
+            });
+        } catch (error) {
+            toast.error('Failed to delete task');
+        }
+    };
     return (
         <>
             <motion.div 
@@ -56,7 +66,7 @@ const TaskItem = ({ task }) => {
                         <HiOutlinePencilAlt size={20} />
                     </button>
 
-                    <button onClick={() => dispatch(deleteTaskThunk(task._id))} className="p-3 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all">
+                    <button onClick={handleDelete} className="p-3 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all">
                         <HiOutlineTrash size={20} />
                     </button>
                 </div>

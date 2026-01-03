@@ -11,7 +11,9 @@ const EditTaskModal = ({ task, onClose }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         await dispatch(updateTaskThunk({ id: task._id, updatedData: formData }));
-        toast.success('updated successful!');
+        toast.success('updated successful!',{
+                style: { borderRadius: '15px', background: '#333', color: '#fff' }
+            });
         
         onClose();
     };
