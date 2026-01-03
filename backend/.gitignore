@@ -1,0 +1,12 @@
+# Dependencies
+node_modules/
+
+# Environment Variables (MongoDB URI, Port, Secrets)
+.env
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS files
+.DS_Store
