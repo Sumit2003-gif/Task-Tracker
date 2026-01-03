@@ -11,7 +11,7 @@ const Port = process.env.PORT
 connectDB()
 app.use(cors({
   origin: process.env.FRONTEND_URL, 
-  methods: ["GET", "POST", "PUT", "DELETE"],
+  methods: ["GET", "POST", "PUT", "DELETE","OPTIONS"],
   credentials: true
 }));
 app.use(express.json())
